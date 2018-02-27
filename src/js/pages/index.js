@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { Button, Container, Header, Icon, Image, Menu, Segment, Sidebar } from 'semantic-ui-react'
+import { Link } from 'react-router-dom'
 
 class SidebarLeftOverlay extends Component {
   constructor () {
@@ -23,7 +24,7 @@ class SidebarLeftOverlay extends Component {
             </Menu.Item>
             <Menu.Item name='gamepad'>
               <Icon name='gamepad' />
-              Play
+              <Link to='play'>Play</Link>
             </Menu.Item>
           </Sidebar>
           <Sidebar.Pusher>
@@ -45,14 +46,14 @@ class SidebarLeftOverlay extends Component {
                   <Menu.Item
                     name='play'
                     position='right'>
-                    <Button inverted>Play</Button>
+                    <Link to='play' ><Button inverted>Play</Button></Link>
                   </Menu.Item>
                 </Menu>
               </Container>
               <Container text>
                 <Header as='h1' inverted>Contre Chess</Header>
                 <Header as='h2' inverted>Play chess with anyone in the world using the ERC20 OCC token on the Ethereum blockchain.</Header>
-                <Button size='huge' primary icon><Icon name='right arrow' />Play</Button>
+                <Link to='play' ><Button size='huge' primary icon><Icon name='right arrow' />Play</Button></Link>
               </Container>
             </Segment>
           </Sidebar.Pusher>
