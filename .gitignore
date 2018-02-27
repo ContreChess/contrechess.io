@@ -58,6 +58,7 @@ typings/
 .env
 semantic/
 *.swp
-*.swp
-
+*.swo
+dist/**
+staging/**
 

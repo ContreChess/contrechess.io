@@ -1,0 +1,13 @@
+import React from 'react'
+import ReactDOM from 'react-dom'
+import App from './app'
+
+const app = document.getElementById('app')
+
+
+
+ReactDOM.render(<App />, app)
+
+
+//<Route exact path="/play" component={Play} />
+//<Route exact path="/game(/:id)" component={Game} />

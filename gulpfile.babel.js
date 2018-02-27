@@ -16,111 +16,85 @@ const gulp            = require('gulp'),
       watch           = require('gulp-watch'),
       source          = require('vinyl-source-stream'),
       config = {
-          name: 'airdrop',
+          name: 'contrechess',
           fileTypes: {
             all: '**/*',
             html: '**/*.html',
             css: '**/*.css',
             images: '**/*.+(png|jpg|jpeg|gif|svg)',
             js: 'js/**/*.js',
-            contracts: 'contracts/*.json',
-            main: 'js/loader.js'
+            contracts: 'builds/contracts/*.json',
+            main: 'main.js'
           },
-          source: {
-            baseDir: 'src',
-            images: 'images'
-          },
-          staging: {
-            baseDir: 'staging',
-            javascript: 'js',
-            contracts: 'contracts'
-          },
-          distribution: {
-            baseDir: 'dist',
-            javascript: 'js',
-            images: 'images',
-            contracts: 'contracts'
+          baseDir: {
+            source: 'src',
+            staging : 'staging',
+            distribution: 'dist'
           }
-        };
+        }
 
 gulp.task('clean', function (callback) {
-  runSequence('clean:dist', 'clean:stage', callback);
-});
+  runSequence('clean:dist', 'clean:stage', callback)
+})
 
 gulp.task('clean:stage', function () {
-  let stagingDir = `${config.staging.baseDir}/${config.fileTypes.all}`;
-  return del.sync(stagingDir);
-});
+  let stagingDir = `${config.baseDir.staging}/${config.fileTypes.all}`
+  return del.sync(stagingDir)
+})
 
 gulp.task('clean:dist', function () {
-  let distributionDir = `${config.distribution.baseDir}/${config.fileTypes.all}`;
-  return del.sync(distributionDir);
-});
+  let distributionDir = `${config.baseDir.distribution}/${config.fileTypes.all}`
+  return del.sync(distributionDir)
+})
 
 gulp.task('stage:contracts', function () {
-  let sourceDir  = `${config.source.baseDir}/${config.fileTypes.contracts}`,
-      stagingDir = `${config.staging.baseDir}/${config.staging.contracts}`;
+  let sourceDir  = config.fileTypes.contracts,
+      stagingDir = config.baseDir.staging
   return gulp.src(sourceDir)
-  .pipe(gulp.dest(stagingDir));
-});
-
-gulp.task('stage:config', function () {
-  let stagingDir = `${config.staging.baseDir}/${config.staging.javascript}`,
-      environment = 'export default { ',
-      indexOfNetworkOption = process.argv.indexOf('--network'),
-      optionValue,
-      repeatCounter = 2;
-      
-  if (indexOfNetworkOption> -1) {
-     optionValue = process.argv[indexOfNetworkOption + 1];
-    environment += `environment: \"${optionValue}\" }\n`; 
-  } else {
-    environment += '}\n';
-  }
-
-  return file('config.js', environment, { src: true })
-    .pipe(gulp.dest(stagingDir));
-
-});
+  .pipe(gulp.dest(stagingDir))
+})
 
 gulp.task('stage:javascript', function () {
-  let sourceDir  = `${config.source.baseDir}/${config.fileTypes.js}`,
-      stagingDir = `${config.staging.baseDir}/${config.staging.javascript}`;
+  let sourceDir  = `${config.baseDir.source}/${config.fileTypes.js}`,
+      stagingDir = config.baseDir.staging
   return gulp.src(sourceDir)
   .pipe(gulp.dest(stagingDir));
-});
+})
 
 
 gulp.task('stage:images', function () {
-  let sourceDir  = `${config.source.baseDir}/${config.source.images}/${config.fileTypes.images}`,
-      distributionDir = `${config.distribution.baseDir}/${config.distribution.images}`;
+  let sourceDir  = `${config.baseDir.source}/${config.fileTypes.images}`,
+      distributionDir = config.baseDir.distribution
   return gulp.src(sourceDir)
     // caching images that ran through imagemin
     .pipe(cache(imagemin({
       interlaced: true
     })))
-    .pipe(gulp.dest(distributionDir));
-});
+    .pipe(gulp.dest(distributionDir))
+})
     
 gulp.task('stage:html', function () {
-  let htmlFiles = `${config.source.baseDir}/${config.fileTypes.html}`;
+  let htmlFiles = `${config.baseDir.source}/${config.fileTypes.html}`
   return gulp.src(htmlFiles)
-  .pipe(gulp.dest(config.distribution.baseDir));
-});
+  .pipe(gulp.dest(config.baseDir.distribution))
+})
 
 gulp.task('stage:css', function () {
-  let cssFiles = `${config.source.baseDir}/${config.fileTypes.css}`;
+  let cssFiles = `${config.baseDir.source}/${config.fileTypes.css}`;
   return gulp.src(cssFiles)
-  .pipe(gulp.dest(config.distribution.baseDir));
+  .pipe(gulp.dest(config.baseDir.distribution));
 });
 
-gulp.task('bundle:javascript', ['stage:javascript', 'stage:contracts', 'stage:config'], function () {
-  let mainFile = `${config.staging.baseDir}/${config.fileTypes.main}`,
-      distributionDir = `${config.distribution.baseDir}/${config.distribution.javascript}`;
+gulp.task('bundle', ['stage:javascript', 'stage:contracts'], function () {
+  let mainFile = `${config.baseDir.staging}/${config.fileTypes.main}`
   return browserify(mainFile)
+      .transform('browserify-css', {
+        minify: true,
+        output: config.name + '.css'
+      })
       .transform(babelify, {
         presets: ['env', 'react'],
-        plugins: ['react-html-attrs', 'transform-class-properties' ]
+        plugins: ['react-html-attrs', 'transform-class-properties' /*, 'browserify-css'*/ ]
         })
       .bundle()
     .pipe(plumber())
@@ -129,11 +103,11 @@ gulp.task('bundle:javascript', ['stage:javascript', 'stage:contracts', 'stage:co
     .pipe(minify())
     .pipe(size())
     .pipe(plumber.stop())
-    .pipe(gulp.dest(distributionDir));
+    .pipe(gulp.dest(config.baseDir.distribution));
 });
 
 gulp.task('build', function (callback) {
-  runSequence('clean:dist', 'clean:stage', ['stage:html', 'stage:css', 'stage:images', 'bundle:javascript'],
+  runSequence('clean:dist', 'clean:stage', ['stage:html', 'stage:css', 'stage:images', 'bundle'],
     callback);
 });
 
@@ -146,7 +120,7 @@ gulp.task('browser-sync', ['build'], function () {
 });
  
 gulp.task('default', ['browser-sync'], function () {
-  let jsFiles = `${config.distribution.baseDir}/${config.fileTypes.js}`;
+  let jsFiles = `${config.baseDir.distribution}/${config.fileTypes.js}`;
   return watch(jsFiles, browserSync.reload);
 });
 
