@@ -61,4 +61,8 @@ semantic/
 *.swo
 dist/**
 staging/**
-
+coverage/
+coverage.json
+.cofounders.js
+.mnemonic.js
+.infura.js

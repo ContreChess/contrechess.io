@@ -46,6 +46,7 @@
     "gulp-size": "^3.0.0",
     "gulp-watch": "^5.0.0",
     "run-sequence": "^2.2.1",
+    "truffle-hdwallet-provider": "git+https://github.com/trufflesuite/truffle-hdwallet-provider.git#71520a2",
     "vinyl-buffer": "^1.0.1",
     "vinyl-source-stream": "^2.0.0"
   },
