@@ -52,13 +52,14 @@
   },
   "dependencies": {
     "babel-core": "^6.26.0",
-    "ethjs": "^0.3.3",
     "ipfs": "^0.27.7",
     "qrious": "^4.0.2",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "react-router-dom": "^4.2.2",
     "semantic-ui-css": "^2.3.0",
-    "semantic-ui-react": "^0.78.3"
+    "semantic-ui-react": "^0.78.3",
+    "truffle-contract": "^3.0.4",
+    "web3": "^0.20.5"
   }
 }

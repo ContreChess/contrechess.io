@@ -1,8 +1,6 @@
 const HDWalletProvider = require("truffle-hdwallet-provider"),
-      secret = require('./.mnemonic'),
       infura = require('./.infura'),
-      endpoint = infura ? `/${infura.token}` : '',
-      notSoSecret = 'candy maple cake sugar pudding cream honey rich smooth crumble sweet treat';
+      endpoint = infura ? `/${infura.token}` : ''
 
 module.exports = {
   // See <http://truffleframework.com/docs/advanced/configuration>

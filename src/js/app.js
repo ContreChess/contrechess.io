@@ -9,7 +9,6 @@ class App extends Component {
         <Router>
           <div>
             <Route exact path="/" component={Index} />
-            <Route path="/play" component={Play} />
           </div>
         </Router>
     )
