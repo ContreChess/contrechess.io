@@ -1,20 +1,20 @@
-const gulp            = require('gulp'),
+const
       babelify        = require('babelify'),
+      browserSync     = require('browser-sync').create(),
       browserify      = require('browserify'),
       buffer          = require('vinyl-buffer'),
       cache           = require('gulp-cache'),
       defmod          = require('gulp-define-module'),
       del             = require('del'),
-      file            = require('gulp-file'),
+      gulp            = require('gulp'),
       imagemin        = require('gulp-imagemin'),
       minify          = require('gulp-minify'),
-      browserSync     = require('browser-sync').create(),
+      plumber         = require('gulp-plumber'),
       rename          = require('gulp-rename'),
       runSequence     = require('run-sequence'),
       size            = require('gulp-size'),
-      plumber         = require('gulp-plumber'),
-      watch           = require('gulp-watch'),
       source          = require('vinyl-source-stream'),
+      watch           = require('gulp-watch'),
       config = {
           name: 'contrechess',
           fileTypes: {
@@ -58,9 +58,8 @@ gulp.task('stage:javascript', function () {
   let sourceDir  = `${config.baseDir.source}/${config.fileTypes.js}`,
       stagingDir = config.baseDir.staging
   return gulp.src(sourceDir)
-  .pipe(gulp.dest(stagingDir));
+  .pipe(gulp.dest(stagingDir))
 })
-
 
 gulp.task('stage:images', function () {
   let sourceDir  = `${config.baseDir.source}/${config.fileTypes.images}`,
@@ -80,10 +79,10 @@ gulp.task('stage:html', function () {
 })
 
 gulp.task('stage:css', function () {
-  let cssFiles = `${config.baseDir.source}/${config.fileTypes.css}`;
+  let cssFiles = `${config.baseDir.source}/${config.fileTypes.css}`
   return gulp.src(cssFiles)
-  .pipe(gulp.dest(config.baseDir.distribution));
-});
+  .pipe(gulp.dest(config.baseDir.distribution))
+})
 
 gulp.task('bundle', ['stage:javascript', 'stage:contracts'], function () {
   let mainFile = `${config.baseDir.staging}/${config.fileTypes.main}`
@@ -103,24 +102,24 @@ gulp.task('bundle', ['stage:javascript', 'stage:contracts'], function () {
     .pipe(minify())
     .pipe(size())
     .pipe(plumber.stop())
-    .pipe(gulp.dest(config.baseDir.distribution));
-});
+    .pipe(gulp.dest(config.baseDir.distribution))
+})
 
 gulp.task('build', function (callback) {
   runSequence('clean:dist', 'clean:stage', ['stage:html', 'stage:css', 'stage:images', 'bundle'],
-    callback);
-});
+    callback)
+})
 
 gulp.task('browser-sync', ['build'], function () {
   browserSync.init({
     server: {
       baseDir: './dist',
     }
-  });
-});
+  })
+})
  
 gulp.task('default', ['browser-sync'], function () {
-  let jsFiles = `${config.baseDir.distribution}/${config.fileTypes.js}`;
-  return watch(jsFiles, browserSync.reload);
-});
+  let jsFiles = `${config.baseDir.distribution}/${config.fileTypes.js}`
+  return watch(jsFiles, browserSync.reload)
+})
 
